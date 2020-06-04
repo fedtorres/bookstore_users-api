@@ -1,7 +1,6 @@
 package users
 
 import (
-	"github.com/fedtorres/bookstore_oauth-go/oauth"
 	"github.com/fedtorres/bookstore_users-api/domain/users"
 	"github.com/fedtorres/bookstore_users-api/services"
 	"github.com/fedtorres/bookstore_users-api/utils/errors"
@@ -35,11 +34,6 @@ func Create(c *gin.Context) {
 }
 
 func Get(c *gin.Context) {
-	if err := oauth.AuthenticateRequest(c.Request); err != nil {
-		c.JSON(err.Status, err)
-		return
-	}
-
 	userId, idErr := getUserId(c.Param("user_id"))
 	if idErr != nil {
 		c.JSON(idErr.Status, idErr)
@@ -51,9 +45,7 @@ func Get(c *gin.Context) {
 		return
 	}
 
-	if oauth
-
-	c.JSON(http.StatusOK, user.Marshal(oauth.IsPublic(c.Request)))
+	c.JSON(http.StatusOK, user.Marshal(c.GetHeader("X-Public") == "true"))
 }
 
 func Update(c *gin.Context) {
